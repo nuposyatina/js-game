@@ -234,7 +234,7 @@ class VerticalFireball extends Fireball {
   }
 }
 
-class FireRain extends FireBall {
+class FireRain extends Fireball {
   constructor(pos) {
     super(pos, new Vector(0, 3));
     this.init = pos;
@@ -292,7 +292,7 @@ const actorDict = {
   '|': VerticalFireball,
   'v': FireRain
 };
-const parser = new LevelParser(actors);
+const parser = new LevelParser(actorDict);
 
 loadLevels()
   .then(result => runGame(JSON.parse(result), parser, DOMDisplay))
