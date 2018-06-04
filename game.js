@@ -149,3 +149,76 @@ class Level {
   }
 }
 
+class LevelParser {
+  constructor(dictionary = {}) {
+    this.dictionary = dictionary;
+  }
+
+  actorFromSymbol(symbol) {
+    return this.dictionary[symbol];
+  }
+
+  obstacleFromSymbol(symbol) {
+    if (symbol === 'x') {
+      return 'wall';
+    }
+    if (symbol === '!') {
+      return 'lava';
+    }
+    return undefined;
+  }
+
+  createGrid(scheme) {
+    return scheme.map(row => {
+      return row.split('').map(cell => {
+        return this.obstacleFromSymbol(cell);
+      });
+    });
+  }
+
+  createActors(scheme) {
+    return scheme.reduce((result, row, y) => {
+      row.split('').forEach((cell, x) => {
+        const actor = this.actorFromSymbol(cell);
+        if (typeof actor === 'function') {
+          const instance = new actor(new Vector(x, y));
+          if (instance instanceof Actor) {
+            result.push(instance);
+          }
+        }
+      });
+      return result;
+    }, []);
+  }
+
+  parse(scheme) {
+    return new Level(this.createGrid(scheme), this.createActors(scheme));
+  }
+}
+
+class Fireball extends Actor {
+  constructor(pos = new Vector(0,0), speed = new Vector(0,0)) {
+    super(pos, new Vector(1,1), speed);
+  }
+  get type() {
+    return 'fireball';
+  }
+
+  getNextPosition(time = 1) {
+    return this.pos.plus(this.speed.times(time));
+  }
+
+  handleObstacle() {
+    this.speed = this.speed.times(-1);
+  }
+
+  act(time, level) {
+    let nextPosition = this.getNextPosition(time);
+    if (level.obstacleAt(nextPosition, this.size)) {
+      this.handleObstacle();
+    } else {
+      this.pos = nextPosition;
+    }
+  }
+}
+
