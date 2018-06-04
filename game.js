@@ -197,8 +197,8 @@ class LevelParser {
 }
 
 class Fireball extends Actor {
-  constructor(pos = new Vector(0,0), speed = new Vector(0,0)) {
-    super(pos, new Vector(1,1), speed);
+  constructor(pos = new Vector(0, 0), speed = new Vector(0, 0)) {
+    super(pos, new Vector(1, 1), speed);
   }
   get type() {
     return 'fireball';
@@ -222,3 +222,78 @@ class Fireball extends Actor {
   }
 }
 
+class HorizontalFireball extends Fireball {
+  constructor(pos) {
+    super(pos, new Vector(2, 0));
+  }
+}
+
+class VerticalFireball extends Fireball {
+  constructor(pos) {
+    super(pos, new Vector(0, 2));
+  }
+}
+
+class FireRain extends FireBall {
+  constructor(pos) {
+    super(pos, new Vector(0, 3));
+    this.init = pos;
+  }
+  handleObstacle() {
+    this.pos = this.init;
+  }
+}
+
+class Coin extends Actor {
+  constructor(pos = new Vector()) {
+    super(pos.plus(new Vector(0.2, 0.1), new Vector(0.6, 0.6)));
+    this.initPosition = pos.plus(new Vector(0.2, 0.1));
+    this.springSpeed = 8;
+    this.springDist = 0.07;
+    this.spring = Math.random() * 2 * Math.PI;
+  }
+
+  get type() {
+    return 'coin';
+  }
+
+  updateSpring(time = 1) {
+    this.spring += this.springSpeed * time;
+  }
+
+  getSpringVector() {
+    return new Vector(0, Math.sin(this.spring) * this.springDist);
+  }
+
+  getNextPosition(time = 1) {
+    this.updateSpring(time);
+    return this.initPosition.plus(this.getSpringVector());
+  }
+
+  act(time) {
+    this.pos = this.getNextPosition(time);
+  }
+}
+
+class Player extends Actor {
+  constructor(pos = new Vector(1, 1)) {
+    super(pos.plus(new Vector(0, -0.5)), new Vector(0.8, 1.5), new Vector());
+  }
+
+  get type() {
+    return 'player';
+  }
+}
+
+const actorDict = {
+  '@': Player,
+  'o': Coin,
+  '=': HorizontalFireball,
+  '|': VerticalFireball,
+  'v': FireRain
+};
+const parser = new LevelParser(actors);
+
+loadLevels()
+  .then(result => runGame(JSON.parse(result), parser, DOMDisplay))
+  .then(() => alert('Поздравляю! Вы победили.'));
