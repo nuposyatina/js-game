@@ -70,7 +70,7 @@ class Actor {
 }
 
 class Level {
-  constructor(grid, actors) {
+  constructor(grid = [], actors = []) {
     this.grid = grid;
     this.actors = actors;
     this.player = this.actors.find(actor => actor.type === 'player');
@@ -97,9 +97,9 @@ class Level {
     if (!(pos instanceof Vector) || !(size instanceof Vector)) {
       throw new Error('Должен быть объектом типа Vector');
     }
-    let left = Math.floor(pos.x);
+    let left = Math.ceil(pos.x);
     let right = Math.ceil(pos.x + size.x);
-    let top = Math.floor(pos.y);
+    let top = Math.ceil(pos.y);
     let bottom = Math.ceil(pos.y + size.y);
 
     if (top < 0 || left < 0 || right > this.width) {
@@ -109,8 +109,8 @@ class Level {
       return 'lava';
     }
 
-    for (i = top; i < bottom; i++) {
-      for (j = left; j < right; j++) {
+    for (let i = top; i < bottom; i++) {
+      for (let j = left; j < right; j++) {
         if (this.grid[j][i]) {
           return this.grid[j][i];
         }
@@ -135,9 +135,8 @@ class Level {
       return;
     }
 
-    if (type === 'lava' || type === 'fireball') {
-      this.status === 'lost';
-      return;
+    if (type === 'lava' || type === 'fireball' ) {
+      this.status = 'lost';
     }
 
     if (type === 'coin' && actor.type === 'coin') {
@@ -246,7 +245,7 @@ class FireRain extends Fireball {
 
 class Coin extends Actor {
   constructor(pos = new Vector()) {
-    super(pos.plus(new Vector(0.2, 0.1), new Vector(0.6, 0.6)));
+    super(pos.plus(new Vector(0.2, 0.1)), new Vector(0.6, 0.6));
     this.initPosition = pos.plus(new Vector(0.2, 0.1));
     this.springSpeed = 8;
     this.springDist = 0.07;
