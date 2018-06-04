@@ -135,7 +135,7 @@ class Level {
       return;
     }
 
-    if (type === 'lava' || type === 'fireball' ) {
+    if (type === 'lava' || type === 'fireball') {
       this.status = 'lost';
     }
 
