@@ -76,9 +76,7 @@ class Level {
     this.player = this.actors.find(actor => actor.type === 'player');
     this.height = grid.length;
     // тут можно написать короче, если использовать стрелочную функцию
-    this.width = grid.reduce(function (acc, el) {
-      return Math.max(acc, el.length)
-    }, 0)
+    this.width = grid.reduce((acc, el) => Math.max(acc, el.length), 0)
     this.status = null;
     this.finishDelay = 1;
   }
@@ -103,10 +101,10 @@ class Level {
     // не все округления тут корретные
     // попробуйте нарисовать игровое поле и объект который занимает несколько клеток,
     // а потом посмотреть какими должны быть граничные значения
-    let left = Math.ceil(pos.x);
-    let right = Math.ceil(pos.x + size.x);
-    let top = Math.ceil(pos.y);
-    let bottom = Math.ceil(pos.y + size.y);
+    const left = Math.floor(pos.x);
+    const right = Math.ceil(pos.x + size.x);
+    const top = Math.floor(pos.y);
+    const bottom = Math.ceil(pos.y + size.y);
 
     if (top < 0 || left < 0 || right > this.width) {
       return 'wall';
@@ -117,9 +115,10 @@ class Level {
 
     for (let i = top; i < bottom; i++) {
       for (let j = left; j < right; j++) {
+        let obstacle = this.grid[j][i];
         // this.grid[j][i] лучше записать в переменную, чтобы 2 раза не писать
-        if (this.grid[j][i]) {
-          return this.grid[j][i];
+        if (obstacle) {
+          return obstacle;
         }
       }
     }
@@ -127,19 +126,19 @@ class Level {
 
   removeActor(actor) {
     // const
-    let index = this.actors.indexOf(actor);
+    const index = this.actors.indexOf(actor);
     // если объект не будет найден, код отработает некорректно
-    this.actors.splice(index, 1);
+    if (index !== -1) {
+      this.actors.splice(index, 1);
+    }
+
   }
 
   noMoreActors(type) {
     // тут лучше использовать метод some
     // и если выражение в if это true или false,
     // то можно писать сразу return <выражение>
-    if (!(this.actors.find(actor => actor.type === type))) {
-      return true;
-    }
-    return false;
+    return !this.actors.some(actor => actor.type === type);
   }
 
   playerTouched(type, actor) {
@@ -183,11 +182,7 @@ class LevelParser {
   createGrid(scheme) {
     // можно использовать короткую форму записи стрелочных функций
     // (без фигурных скобок и return)
-    return scheme.map(row => {
-      return row.split('').map(cell => {
-        return this.obstacleFromSymbol(cell);
-      });
-    });
+    return scheme.map(row => row.split('').map(cell => this.obstacleFromSymbol(cell)));
   }
 
   createActors(scheme) {
