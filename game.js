@@ -115,7 +115,7 @@ class Level {
 
     for (let i = top; i < bottom; i++) {
       for (let j = left; j < right; j++) {
-        let obstacle = this.grid[j][i];
+        let obstacle = this.grid[i][j];
         // this.grid[j][i] лучше записать в переменную, чтобы 2 раза не писать
         if (obstacle) {
           return obstacle;
