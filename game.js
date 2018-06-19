@@ -109,7 +109,7 @@ class Level {
 
     for (let i = top; i < bottom; i++) {
       for (let j = left; j < right; j++) {
-        let obstacle = this.grid[i][j];
+        const obstacle = this.grid[i][j];
         if (obstacle) {
           return obstacle;
         }
@@ -206,7 +206,7 @@ class Fireball extends Actor {
   }
 
   act(time, level) {
-    let nextPosition = this.getNextPosition(time);
+    const nextPosition = this.getNextPosition(time);
     if (level.obstacleAt(nextPosition, this.size)) {
       this.handleObstacle();
     } else {
