@@ -75,7 +75,6 @@ class Level {
     this.actors = actors;
     this.player = this.actors.find(actor => actor.type === 'player');
     this.height = grid.length;
-    // тут можно написать короче, если использовать стрелочную функцию
     this.width = grid.reduce((acc, el) => Math.max(acc, el.length), 0)
     this.status = null;
     this.finishDelay = 1;
@@ -96,11 +95,6 @@ class Level {
     if (!(pos instanceof Vector) || !(size instanceof Vector)) {
       throw new Error('Должен быть объектом типа Vector');
     }
-    // если значение присваивается переменной один раз,
-    // то лучше использовать const
-    // не все округления тут корретные
-    // попробуйте нарисовать игровое поле и объект который занимает несколько клеток,
-    // а потом посмотреть какими должны быть граничные значения
     const left = Math.floor(pos.x);
     const right = Math.ceil(pos.x + size.x);
     const top = Math.floor(pos.y);
@@ -116,7 +110,6 @@ class Level {
     for (let i = top; i < bottom; i++) {
       for (let j = left; j < right; j++) {
         let obstacle = this.grid[i][j];
-        // this.grid[j][i] лучше записать в переменную, чтобы 2 раза не писать
         if (obstacle) {
           return obstacle;
         }
@@ -125,9 +118,7 @@ class Level {
   }
 
   removeActor(actor) {
-    // const
     const index = this.actors.indexOf(actor);
-    // если объект не будет найден, код отработает некорректно
     if (index !== -1) {
       this.actors.splice(index, 1);
     }
@@ -135,9 +126,6 @@ class Level {
   }
 
   noMoreActors(type) {
-    // тут лучше использовать метод some
-    // и если выражение в if это true или false,
-    // то можно писать сразу return <выражение>
     return !this.actors.some(actor => actor.type === type);
   }
 
@@ -175,13 +163,9 @@ class LevelParser {
     if (symbol === '!') {
       return 'lava';
     }
-    // лишняя строчка
-    return undefined;
   }
 
   createGrid(scheme) {
-    // можно использовать короткую форму записи стрелочных функций
-    // (без фигурных скобок и return)
     return scheme.map(row => row.split('').map(cell => this.obstacleFromSymbol(cell)));
   }
 
